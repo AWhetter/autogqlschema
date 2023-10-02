@@ -1,4 +1,4 @@
-:mod:`graphqldomain`
+:mod:`autogqlschema`
 ====================
 
 This extension provides a Sphinx directive for generating documentation for GraphQL schemas.
