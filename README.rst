@@ -60,8 +60,8 @@ In the following example, documentation is generated from ths file structure.
 
     myrepo
     ├── doc
-        ├── conf.py
-        └── index.rst
+    │   ├── conf.py
+    │   └── index.rst
     └── src
         └── mypackage
             ├── schema
