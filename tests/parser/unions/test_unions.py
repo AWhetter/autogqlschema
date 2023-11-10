@@ -36,12 +36,12 @@ def test_extends_types(parsed_result):
         [
             AlwaysEqual("type1"),
             AlwaysEqual("type2"),
-            AlwaysEqual("type3"),
             _objects.GraphQLUnion(
                 None,
                 "union1 = type1 | type2 | type3",
                 AlwaysEqual(),
             ),
+            AlwaysEqual("type3"),
         ],
         None,
         "",
@@ -53,7 +53,6 @@ def test_extends_directives(parsed_result):
     """Can parse unions with an extension to the directives."""
     expected = _objects.GraphQLSchema(
         [
-            AlwaysEqual("directiveA"),
             AlwaysEqual("type1"),
             AlwaysEqual("type2"),
             _objects.GraphQLUnion(
@@ -61,6 +60,7 @@ def test_extends_directives(parsed_result):
                 "union2 @directiveA = type1 | type2",
                 AlwaysEqual(),
             ),
+            AlwaysEqual("directiveA"),
         ],
         None,
         "",

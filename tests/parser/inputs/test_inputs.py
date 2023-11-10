@@ -61,7 +61,7 @@ def test_extends_fields(parsed_result):
                     _objects.GraphQLInputField(
                         "input1.field2 tests parsing the simplest possible input extension of fields",
                         "field2: Int",
-                        2,
+                        6,
                     ),
                 ],
                 None,

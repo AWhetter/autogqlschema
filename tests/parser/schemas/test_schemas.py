@@ -31,3 +31,12 @@ def test_extends(parsed_result):
     expected.mutation_type = "MyMutationRootType1"
     expected.subscription_type = "MySubscriptionRootType1"
     assert parsed_result == expected
+
+
+def test_extends_reversed(parsed_result):
+    """Can parse an extended schema in reverse order of definition."""
+    expected = _objects.GraphQLSchema(AlwaysEqual(), None, "@directive1 @directive2")
+    expected.query_type = "MyQueryRootType1"
+    expected.mutation_type = "MyMutationRootType1"
+    expected.subscription_type = "MySubscriptionRootType1"
+    assert parsed_result == expected

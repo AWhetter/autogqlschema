@@ -92,7 +92,6 @@ def test_extends_inheritance(parsed_result):
     expected = _objects.GraphQLSchema(
         [
             AlwaysEqual("interface1"),
-            AlwaysEqual("interface2"),
             _objects.GraphQLType(
                 [
                     AlwaysEqual(),
@@ -101,6 +100,7 @@ def test_extends_inheritance(parsed_result):
                 "type1 implements interface1 & interface2",
                 AlwaysEqual(),
             ),
+            AlwaysEqual("interface2"),
         ],
         None,
         "",
@@ -124,7 +124,7 @@ def test_extends_fields(parsed_result):
                         {},
                         "type1.field2 tests parsing the simplest possible type extension of fields",
                         "field2: Int",
-                        2,
+                        6,
                     ),
                 ],
                 None,

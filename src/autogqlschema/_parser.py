@@ -502,12 +502,11 @@ class Parser:
     @classmethod
     def parse_from_source(cls, path: StrPath, *paths: StrPath) -> GraphQLSchema:
         with open(path) as in_f:
-            schema = graphql.utilities.build_schema(in_f.read())
+            source = in_f.read()
 
         for extension in paths:
             with open(extension) as in_f:
-                document = graphql.parse(in_f.read())
+                source += "\n" + in_f.read()
 
-            schema = graphql.utilities.extend_schema(schema, document)
-
+        schema = graphql.utilities.build_schema(source)
         return cls.parse(schema)

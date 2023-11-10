@@ -69,7 +69,7 @@ def test_extends_fields(parsed_result):
                         {},
                         "interface1.field2 tests parsing the simplest possible interface extension of fields",
                         "field2: Int",
-                        2,
+                        6,
                     ),
                 ],
                 None,
