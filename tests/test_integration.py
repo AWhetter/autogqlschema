@@ -460,3 +460,42 @@ class TestUnions:
         assert len(links) == 1
         link = links[0]
         assert link.get_text() == "schema1.union1"
+
+
+class TestRootDir:
+    @pytest.fixture(scope="class")
+    def soup(self, tmp_path_factory):
+        cwd = pathlib.Path.cwd()
+        root_dir = "schema"
+
+        test_name = "type_objects"
+        dest = tmp_path_factory.mktemp(test_name)
+        (dest / root_dir).mkdir()
+        test_file_name = f"{test_name}.graphql"
+        test_file = pathlib.Path("tests") / "fixtures" / test_file_name
+        shutil.copy(test_file, dest / root_dir)
+        shutil.copy(pathlib.Path("tests") / "fixtures" / "conf.py", dest)
+
+        with (dest / "index.rst").open("w") as out_f:
+            out_f.write(f"Schema\n")
+            out_f.write(f"------\n")
+            out_f.write(f"\n")
+            out_f.write(f".. autogqlschema:: schema1\n")
+            out_f.write(f"   :debug:\n")
+            out_f.write(f"   :root-dir: {root_dir}\n")
+            out_f.write(f"   :source-files: {test_file_name}\n\n")
+
+        os.chdir(dest)
+        rebuild()
+
+        with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
+            yield bs4.BeautifulSoup(in_f, "html.parser")
+
+        os.chdir(cwd)
+
+    def test_simple_parse(self, soup: bs4.BeautifulSoup):
+        sig = soup.find(id="schema1.type1")
+        assert signature_text(sig) == "type type1"
+
+        sig = soup.find(id="schema1.type1.field1")
+        assert signature_text(sig) == "field1: Int"

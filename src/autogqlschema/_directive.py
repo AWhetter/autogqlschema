@@ -75,7 +75,7 @@ class AutoGQLSchemaDirective(SphinxDirective):
         root_dir = self.options.get("root-dir")
         if root_dir:
             root_dir = pathlib.Path(root_dir)
-            if not root_dir.is_absolute:
+            if not root_dir.is_absolute():
                 root_dir = pathlib.Path(self.env.app.confdir) / root_dir
         else:
             root_dir = self.env.app.confdir
