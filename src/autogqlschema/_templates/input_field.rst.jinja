@@ -1,7 +1,6 @@
 .. gql:input:field:: {{ signature }}
 
 {% if description %}
-   {{ description }}
-   
+   {{ description|indent(3) }}
+
 {% endif %}
- 

@@ -11,5 +11,9 @@ type type2 {
 "union1 tests parsing the simplest possible union definition"
 union union1 = type1 | type2
 
-"union2 tests that directives are parsed"
+"""
+union2 tests that directives are parsed.
+
+It also tests that multiline docstrings are formatted correctly.
+"""
 union union2 @directive1 = type1 | type2

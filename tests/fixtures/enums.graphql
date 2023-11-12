@@ -9,10 +9,16 @@ enum enum1 {
 }
 
 """
-enum2 tests that directives are parsed
+enum2 tests that directives are parsed.
+
+It also tests that multiline docstrings are formatted correctly.
 """
 enum enum2 @directiveA {
-    "enum2.value1 tests that directives are parsed"
+    """
+    enum2.value1 tests that directives are parsed.
+
+    It also tests that multiline docstrings are formatted correctly.
+    """
     value1 @directiveA
 }
 

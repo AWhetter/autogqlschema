@@ -24,7 +24,11 @@ type TestArgumentType {
     fieldA1(
         "arg1 tests that arguments can be documented"
         arg1: Int
-        "arg2 tests that arguments can be documented"
+        """
+        arg2 tests that arguments can be documented.
+        
+        It also tests that multiline docstrings are formatted correctly.
+        """
         arg2: input1
     ): String
 

@@ -7,14 +7,26 @@ type type1 {
 
 }
 
-"type2 tests that directives are parsed"
+"""
+type2 tests that directives are parsed.
+
+It also tests that multiline docstrings are formatted correctly.
+"""
 type type2 @directive1 {
-    "type2.field1 tests that directives are parsed"
+    """
+    type2.field1 tests that directives are parsed.
+
+    It also tests that multiline docstrings are formatted correctly.
+    """
     field1: Int @directive1
 
     "type2.field2 tests that arguments are parsed"
     field2(
-        "arg1 tests that arguments can be documented."
+        """
+        arg1 tests that arguments can be documented.
+
+        It also tests that multiline docstrings are formatted correctly.
+        """
         arg1: Int = 0
     ): String
 }

@@ -9,10 +9,16 @@ input input1 {
 }
 
 """
-input2 tests that directives are parsed
+input2 tests that directives are parsed.
+
+It also tests that multiline docstrings are formatted correctly.
 """
 input input2 @directiveA {
-    "input2.field1 tests that directives are parsed"
+    """
+    input2.field1 tests that directives are parsed.
+    
+    It also tests that multiline docstrings are formatted correctly.
+    """
     field1: Int @directiveA
     "input2.field2 tests that default values are parsed"
     field2: String = "defaultvaluefield2"

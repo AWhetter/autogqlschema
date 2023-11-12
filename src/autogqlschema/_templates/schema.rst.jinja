@@ -2,7 +2,7 @@
    :name: {{ name }}
 
 {% if description %}
-   {{ description }}
+   {{ description|indent(3) }}
 
 {% endif %}
 {% if query_type %}
@@ -14,7 +14,7 @@
 {% if subscription_type %}
    :optype {{ subscription_type }} subscription:
 {% endif %}
-   
+
 {% for child in children %}
    {{ renderer.render(child)|indent(3) }}
 {% endfor %}

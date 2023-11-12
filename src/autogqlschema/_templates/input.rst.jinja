@@ -1,7 +1,7 @@
 .. gql:input:: {{ signature }}
 
 {% if description %}
-   {{ description }}
+   {{ description|indent(3) }}
 
 {% endif %}
 {% for child in children %}

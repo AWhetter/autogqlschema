@@ -80,9 +80,17 @@ class TestArguments:
         sig = soup.find(id="schema1.TestArgumentType.fieldA1")
         links = sig.parent.find("ul").find_all("li")
         assert len(links) == 2
-        enum_link, value_link = links
-        assert enum_link.get_text().startswith("arg1")
-        assert value_link.get_text().startswith("arg2")
+        int_link, input_link = links
+        assert int_link.get_text().startswith("arg1")
+        assert int_link.get_text().endswith(
+            "arg1 tests that arguments can be documented"
+        )
+        assert not soup.find("blockquote")
+        assert input_link.get_text().startswith("arg2")
+        assert input_link.get_text().endswith(
+            "arg2 tests that arguments can be documented.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
 
     def test_type_is_linked(self, soup: bs4.BeautifulSoup):
         sig = soup.find(id="schema1.TestArgumentType.fieldA1")
@@ -183,13 +191,39 @@ class TestDirectives:
 
     def test_with_argument(self, soup: bs4.BeautifulSoup):
         sig = soup.find(id="schema1.directive3")
-        assert signature_text(sig) == "directive @directive3(arg1: input1) on SCALAR"
+        assert (
+            signature_text(sig)
+            == "directive @directive3(arg1: input1, arg2: input1) on SCALAR"
+        )
 
     def test_role(self, soup: bs4.BeautifulSoup):
         links = soup.find(id="roles").find_all("a", "reference")
         assert len(links) == 1
         link = links[0]
         assert link.get_text() == "schema1.directive1"
+
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.directive3")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "directive3 tests that arguments are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
+
+        links = sig.parent.find("ul").find_all("li")
+        assert len(links) == 2
+        arg1_link, arg2_link = links
+        assert arg1_link.get_text().startswith("arg1")
+        assert arg1_link.get_text().endswith(
+            "arg1 tests that arguments can be documented."
+        )
+        assert arg2_link.get_text().startswith("arg2")
+        assert arg2_link.get_text().endswith(
+            "arg2 tests that arguments can be documented.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
 
 
 class TestEnums:
@@ -227,6 +261,23 @@ class TestEnums:
         enum_link, value_link = links
         assert enum_link.get_text() == "schema1.enum1"
         assert value_link.get_text() == "schema1.enum1.value1"
+
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.enum2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "enum2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
+
+        sig = soup.find(id="schema1.enum2.value1")
+        docstring = sig.parent.dd
+        assert docstring.get_text().endswith(
+            "enum2.value1 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
 
 
 class TestInputs:
@@ -269,6 +320,23 @@ class TestInputs:
         assert input_link.get_text() == "schema1.input1"
         assert field_link.get_text() == "schema1.input1.field1"
 
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.input2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "input2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
+
+        sig = soup.find(id="schema1.input2.field1")
+        docstring = sig.parent.dd
+        assert docstring.get_text().endswith(
+            "input2.field1 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
+
 
 class TestInterfaces:
     @pytest.fixture(scope="class")
@@ -310,6 +378,23 @@ class TestInterfaces:
         assert input_link.get_text() == "schema1.interface1"
         assert field_link.get_text() == "schema1.interface1.field1"
 
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.interface2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "interface2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
+
+        sig = soup.find(id="schema1.interface2.field1")
+        docstring = sig.parent.dd
+        assert docstring.get_text().endswith(
+            "interface2.field1 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
+
 
 class TestScalars:
     @pytest.fixture(scope="class")
@@ -332,6 +417,16 @@ class TestScalars:
         assert len(links) == 1
         link = links[0]
         assert link.get_text() == "schema1.scalar1"
+
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.scalar2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "scalar2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
 
 
 class TestSchemas:
@@ -373,6 +468,16 @@ class TestSchemasDirectives:
     def test_with_directive(self, soup: bs4.BeautifulSoup):
         sig = soup.find(id="schema1")
         assert signature_text(sig) == "schema @directive1 @directive2"
+
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "schema1 tests that directives are parsed, and operation types are rendered and linked.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
 
 
 class TestSchemasOptionalOptypes:
@@ -432,6 +537,33 @@ class TestTypeObjects:
         assert input_link.get_text() == "schema1.type1"
         assert field_link.get_text() == "schema1.type1.field1"
 
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.type2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "type2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
+
+        sig = soup.find(id="schema1.type2.field1")
+        docstring = sig.parent.dd
+        assert docstring.get_text().endswith(
+            "type2.field1 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
+
+        sig = soup.find(id="schema1.type2.field2")
+        links = sig.parent.find("ul").find_all("li")
+        assert len(links) == 1
+        arg1_link = links[0]
+        assert arg1_link.get_text().startswith("arg1")
+        assert arg1_link.get_text().endswith(
+            "arg1 tests that arguments can be documented.\n"
+            "It also tests that multiline docstrings are formatted correctly.\n"
+        )
+
 
 class TestUnions:
     @pytest.fixture(scope="class")
@@ -460,6 +592,16 @@ class TestUnions:
         assert len(links) == 1
         link = links[0]
         assert link.get_text() == "schema1.union1"
+
+    def test_docstrings(self, soup: bs4.BeautifulSoup):
+        assert not soup.find("blockquote")
+
+        sig = soup.find(id="schema1.union2")
+        docstring = sig.parent.dd
+        assert docstring.get_text().startswith(
+            "union2 tests that directives are parsed.\n"
+            "It also tests that multiline docstrings are formatted correctly."
+        )
 
 
 class TestRootDir:
