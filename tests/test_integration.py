@@ -641,3 +641,43 @@ class TestRootDir:
 
         sig = soup.find(id="schema1.type1.field1")
         assert signature_text(sig) == "field1: Int"
+
+
+class TestMarkdownProject:
+    @pytest.fixture(scope="class")
+    def soup(self, tmp_path_factory):
+        cwd = pathlib.Path.cwd()
+
+        test_name = "type_objects"
+        dest = tmp_path_factory.mktemp(test_name)
+        test_file_name = f"{test_name}.graphql"
+        test_file = pathlib.Path("tests") / "fixtures" / test_file_name
+        shutil.copy(test_file, dest)
+        shutil.copy(pathlib.Path("tests") / "fixtures" / "conf.py", dest)
+
+        with (dest / "conf.py").open("a") as out_f:
+            out_f.write("extensions.append('myst_parser')\n")
+            out_f.write("myst_enable_extensions = ['colon_fence']\n")
+
+        with (dest / "index.md").open("w") as out_f:
+            out_f.write(f"# Schema\n")
+            out_f.write(f"\n")
+            out_f.write(f"```{{autogqlschema}} schema1\n")
+            out_f.write(f":debug:\n")
+            out_f.write(f":source-files: {test_file_name}\n\n")
+            out_f.write(f"```")
+
+        os.chdir(dest)
+        rebuild()
+
+        with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
+            yield bs4.BeautifulSoup(in_f, "html.parser")
+
+        os.chdir(cwd)
+
+    def test_simple_parse(self, soup: bs4.BeautifulSoup):
+        sig = soup.find(id="schema1.type1")
+        assert signature_text(sig) == "type type1"
+
+        sig = soup.find(id="schema1.type1.field1")
+        assert signature_text(sig) == "field1: Int"

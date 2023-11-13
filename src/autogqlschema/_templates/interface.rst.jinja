@@ -1,9 +1,0 @@
-.. gql:interface:: {{ signature }}
-
-{% if description %}
-   {{ description|indent(3) }}
-
-{% endif %}
-{% for child in children %}
-   {{ renderer.render(child)|indent(3) }}
-{% endfor %}

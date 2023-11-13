@@ -28,14 +28,9 @@ requires-python = ">=3.8"
 dynamic = ["version", "description"]
 dependencies = [
     "graphqldomain>=0.2.0",
+    "myst-parser>=0.16.0",
     "sphinx>=4.0",
     "typing-extensions>=4.0",
-]
-
-[project.optional-dependencies]
-doc = [
-    "furo",
-    "sphinx",
 ]
 
 [project.urls]

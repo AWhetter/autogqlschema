@@ -35,7 +35,9 @@ html_static_path = ['_static']
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#configuration
 
 intersphinx_mapping = {
+    'graphqldomain': ('https://graphqldomain.readthedocs.io/en/latest/', None),
     'sphinx': ('https://www.sphinx-doc.org/en/master', None),
+    'myst': ('https://myst-parser.readthedocs.io/en/latest/', None),
 }
 
 

@@ -1,0 +1,1 @@
+Can correctly parse CommonMark syntax in docstrings

@@ -3,12 +3,12 @@ from __future__ import annotations
 import pathlib
 import typing
 
-from docutils import nodes
 from docutils.nodes import Node
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.states import RSTState
-from docutils.statemachine import StringList
-from sphinx.util.docutils import SphinxDirective, switch_source_input
+import docutils.utils
+import myst_parser.parsers.sphinx_
+from sphinx.util.docutils import SphinxDirective
 
 if typing.TYPE_CHECKING:
     from _typeshed import StrPath
@@ -30,13 +30,22 @@ def validate_source_files(
     return result
 
 
-def parse_generated_content(state: RSTState, content: StringList) -> list[Node]:
-    with switch_source_input(state, content):
-        node = nodes.paragraph()
-        node.document = state.document
-        state.nested_parse(content, 0, node)
-
-        return node.children
+def parse_generated_content(
+    state: RSTState, schema_name: str, content: str
+) -> list[Node]:
+    description = f"{schema_name} source files"
+    document = docutils.utils.new_document(description, state.document.settings)
+    setattr(
+        document,
+        "include_log",
+        state.document.include_log + [(description, (None, None, None, None))],
+    )
+    parser = myst_parser.parsers.sphinx_.MystParser()
+    parser.parse(content, document)
+    # clean up doctree and complete parsing
+    document.transformer.populate_from_components((parser,))
+    document.transformer.apply_transforms()
+    return document.children
 
 
 def csv_required(argument: str | None) -> list[str]:
@@ -88,11 +97,9 @@ class AutoGQLSchemaDirective(SphinxDirective):
         rst_source = renderer.render(schema)
 
         if "debug" in self.options:
-            debug_path = pathlib.Path(self.env.app.outdir) / f"{schema.name}.rst"
+            debug_path = pathlib.Path(self.env.app.outdir) / f"{schema.name}.md"
             with (debug_path).open("w") as out_f:
                 out_f.write(rst_source)
 
-        result = parse_generated_content(
-            self.state, StringList(rst_source.splitlines())
-        )
+        result = parse_generated_content(self.state, schema.name, rst_source)
         return result

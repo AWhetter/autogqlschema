@@ -11,6 +11,15 @@ list in your :doc:`conf.py <sphinx:usage/configuration>` file.
 
    extensions = ["autogqlschema"]
 
+.. note::
+
+   :mod:`autogqlschema` makes use of the `MyST-Parser extension <https://github.com/executablebooks/MyST-Parser>`_
+   to parse the CommonMark formatted docstring of your GraphQL schema.
+   Furthermore, :mod:`autogqlschema` makes use of the :ref:`fieldlist <myst:syntax/fieldlists>`
+   extension to MyST to render the argument field lists used by :doc:`graphqldomain <graphqldomain:index>`.
+   :mod:`autogqlschema` will enable all of this for you
+   if your ``conf.py`` file has not enabled it already.
+
 
 Directives
 ----------

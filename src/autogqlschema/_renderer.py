@@ -13,11 +13,24 @@ class JinjaRenderer:
             trim_blocks=True,
             lstrip_blocks=True,
         )
+        self._max_depths: list[int] = []
 
     def render(self, node: GraphQLObject) -> str:
         LOGGER.log("VERBOSE", "Rendering %s", node.signature)
 
-        template = self.env.get_template(f"{node.type}.rst.jinja")
+        parent_max_depths = self._max_depths
+        self._max_depths = []
+
+        template = self.env.get_template(f"{node.type}.md.jinja")
         ctx = node.get_context_data()
         ctx["renderer"] = self
-        return template.render(**ctx)
+        result = template.render(**ctx)
+
+        max_depth = max(self._max_depths, default=0)
+        fence_length = max_depth
+        result = "`" * fence_length + result.strip() + "`" * fence_length
+
+        parent_max_depths.append(max_depth + 1)
+        self._max_depths = parent_max_depths
+
+        return result
