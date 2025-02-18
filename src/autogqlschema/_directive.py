@@ -38,7 +38,8 @@ def parse_generated_content(
     setattr(
         document,
         "include_log",
-        state.document.include_log + [(description, (None, None, None, None))],
+        # typeshed is missing argument definition
+        state.document.include_log + [(description, (None, None, None, None))],  # type: ignore[attr-defined]
     )
     parser = myst_parser.parsers.sphinx_.MystParser()
     parser.parse(content, document)

@@ -173,7 +173,7 @@ class TestArguments:
 class TestDirectives:
     @pytest.fixture(scope="class")
     def soup(self, builder):
-        extra_content = "Roles\n" "-----\n" "\n" ":gql:directive:`schema1.directive1`\n"
+        extra_content = "Roles\n-----\n\n:gql:directive:`schema1.directive1`\n"
         builder("directives", extra_content=extra_content)
         with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
             return bs4.BeautifulSoup(in_f, "html.parser")
@@ -399,7 +399,7 @@ class TestInterfaces:
 class TestScalars:
     @pytest.fixture(scope="class")
     def soup(self, builder):
-        extra_content = "Roles\n" "-----\n" "\n" ":gql:scalar:`schema1.scalar1`\n"
+        extra_content = "Roles\n-----\n\n:gql:scalar:`schema1.scalar1`\n"
         builder("scalars", extra_content=extra_content)
         with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
             return bs4.BeautifulSoup(in_f, "html.parser")
@@ -432,7 +432,7 @@ class TestScalars:
 class TestSchemas:
     @pytest.fixture(scope="class")
     def soup(self, builder):
-        extra_content = "Roles\n" "-----\n" "\n" ":gql:schema:`schema1`\n"
+        extra_content = "Roles\n-----\n\n:gql:schema:`schema1`\n"
         builder("schemas_basic", extra_content=extra_content)
         with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
             return bs4.BeautifulSoup(in_f, "html.parser")
@@ -568,7 +568,7 @@ class TestTypeObjects:
 class TestUnions:
     @pytest.fixture(scope="class")
     def soup(self, builder):
-        extra_content = "Roles\n" "-----\n" "\n" ":gql:union:`schema1.union1`\n"
+        extra_content = "Roles\n-----\n\n:gql:union:`schema1.union1`\n"
         builder("unions", extra_content=extra_content)
         with (pathlib.Path("_build") / "html" / "index.html").open() as in_f:
             return bs4.BeautifulSoup(in_f, "html.parser")

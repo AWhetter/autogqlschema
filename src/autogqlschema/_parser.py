@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 import operator
 import typing
-from typing import Protocol, Sequence, Type, TypeVar
+from typing import Protocol, TypeVar
 
 import graphql
 import graphql.type
@@ -163,8 +164,7 @@ def _unparse_type_reference(
 
 class DefinitionNode(Protocol):
     @property
-    def ast_node(self) -> graphql.DefinitionNode | None:
-        ...
+    def ast_node(self) -> graphql.DefinitionNode | None: ...
 
 
 def _get_source_line(node: DefinitionNode) -> int | None:
@@ -248,7 +248,7 @@ class Parser:
         return GraphQLEnumValue(description, signature, line)
 
     def _parse_field(
-        self, name: str, obj_type: Type[T], node: graphql.type.GraphQLField
+        self, name: str, obj_type: type[T], node: graphql.type.GraphQLField
     ) -> T:
         if not node.ast_node:
             raise RuntimeError(f"Field '{name}' has no AST node, so cannot be parsed")
