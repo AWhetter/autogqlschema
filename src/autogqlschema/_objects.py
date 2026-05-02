@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, TypeGuard, TypeVar, Union
 
 import sphinx
-from typing_extensions import Self, TypeGuard
+from typing_extensions import Self
 
 NamedTypes = Union[
     "GraphQLEnum",
