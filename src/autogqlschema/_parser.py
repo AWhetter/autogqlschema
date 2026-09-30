@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 import operator
 import typing
-from typing import Protocol, TypeVar
+from collections.abc import Sequence
+from typing import Final, Protocol, TypeVar
 
 import graphql
 import graphql.type
-from graphql.language import ast as gql_ast
 import graphql.utilities
+from graphql.language import ast as gql_ast
 
 if typing.TYPE_CHECKING:
     from _typeshed import StrPath
@@ -26,8 +26,8 @@ from ._objects import (
     GraphQLType,
     GraphQLTypeField,
     GraphQLUnion,
-    SchemaChildTypes,
     NamedTypes,
+    SchemaChildTypes,
 )
 
 T = TypeVar("T", GraphQLTypeField, GraphQLInterfaceField)
@@ -45,7 +45,9 @@ def _unparse_directives(ast_nodes: Sequence[gql_ast.ConstDirectiveNode]) -> str:
     return result
 
 
-def _unparse_const_arguments(ast_nodes: Sequence[gql_ast.ConstArgumentNode]) -> str:
+def _unparse_const_arguments(
+    ast_nodes: Sequence[gql_ast.ConstArgumentNode] | None,
+) -> str:
     result = ""
 
     if not ast_nodes:
@@ -82,7 +84,7 @@ def _unparse_input_values(
         result += ": "
         result += _unparse_type_reference(argument_node.type)
         result += _unparse_default_value(argument_node.default_value)
-        result += _unparse_directives(argument_node.directives)
+        result += _unparse_directives(argument_node.directives or ())
 
     result += ")"
     return result
@@ -175,13 +177,15 @@ def _get_source_line(node: DefinitionNode) -> int | None:
 
 
 class Parser:
-    _DEFAULT_TYPES = {
-        "Int",
-        "Float",
-        "String",
-        "Boolean",
-        "ID",
-    }
+    _DEFAULT_TYPES: Final = frozenset(
+        (
+            "Int",
+            "Float",
+            "String",
+            "Boolean",
+            "ID",
+        )
+    )
     """The names of all default types.
 
     As documented in https://spec.graphql.org/June2018/#sec-Scalars
@@ -212,9 +216,12 @@ class Parser:
             raise RuntimeError(f"Enum '{name}' has no AST node, so cannot be parsed")
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)
@@ -313,9 +320,12 @@ class Parser:
             raise RuntimeError(f"Input '{name}' has no AST node, so cannot be parsed")
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)
@@ -342,9 +352,12 @@ class Parser:
             )
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)
@@ -398,9 +411,12 @@ class Parser:
             raise RuntimeError(f"Type '{name}' has no AST node, so cannot be parsed")
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)
@@ -423,9 +439,12 @@ class Parser:
             raise RuntimeError(f"Scalar '{name}' has no AST node, so cannot be parsed")
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)
@@ -437,9 +456,12 @@ class Parser:
 
     def _parse_schema(self, node: graphql.type.GraphQLSchema) -> GraphQLSchema:
         directives = ""
-        all_directives = list(node.ast_node.directives) if node.ast_node else []
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node and node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives).lstrip()
@@ -481,9 +503,12 @@ class Parser:
             raise RuntimeError(f"Union '{name}' has no AST node, so cannot be parsed")
 
         directives = ""
-        all_directives = list(node.ast_node.directives)
+        all_directives: list[gql_ast.ConstDirectiveNode] = []
+        if node.ast_node.directives:
+            all_directives.extend(node.ast_node.directives)
         for ast_node in node.extension_ast_nodes:
-            all_directives.extend(ast_node.directives)
+            if ast_node.directives:
+                all_directives.extend(ast_node.directives)
 
         if all_directives:
             directives = _unparse_directives(all_directives)

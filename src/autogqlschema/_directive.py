@@ -3,11 +3,11 @@ from __future__ import annotations
 import pathlib
 import typing
 
+import docutils.utils
+import myst_parser.parsers.sphinx_
 from docutils.nodes import Node
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.states import RSTState
-import docutils.utils
-import myst_parser.parsers.sphinx_
 from sphinx.util.docutils import SphinxDirective
 
 if typing.TYPE_CHECKING:
@@ -20,12 +20,11 @@ from ._renderer import JinjaRenderer
 def validate_source_files(
     source_files: list[str], confdir: StrPath
 ) -> list[pathlib.Path]:
-    result = []
+    result: list[pathlib.Path] = []
 
     path = pathlib.Path(confdir)
     for pattern in source_files:
-        for source_file in path.glob(pattern):
-            result.append(source_file)
+        result.extend(path.glob(pattern))
 
     return result
 
@@ -35,12 +34,9 @@ def parse_generated_content(
 ) -> list[Node]:
     description = f"{schema_name} source files"
     document = docutils.utils.new_document(description, state.document.settings)
-    setattr(
-        document,
-        "include_log",
-        # typeshed is missing argument definition
-        state.document.include_log + [(description, (None, None, None, None))],  # type: ignore[attr-defined]
-    )
+    document.include_log = state.document.include_log + [
+        (description, (None, None, None, None))
+    ]
     parser = myst_parser.parsers.sphinx_.MystParser()
     parser.parse(content, document)
     # clean up doctree and complete parsing
@@ -75,7 +71,7 @@ def csv_required(argument: str | None) -> list[str]:
 class AutoGQLSchemaDirective(SphinxDirective):
     has_content = False
     optional_arguments = 1
-    option_spec = {
+    option_spec = {  # noqa: RUF012
         "debug": directives.flag,
         "root-dir": directives.unchanged,
         "source-files": csv_required,

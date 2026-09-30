@@ -34,7 +34,7 @@ class GraphQLObject:
         type_ = type(self)
         module = type_.__module__
         qualname = type_.__qualname__
-        return f"<{module}.{qualname}({repr(self.signature)}) at {hex(id(self))}>"
+        return f"<{module}.{qualname}({self.signature!r}) at {hex(id(self))}>"
 
     def get_context_data(self) -> dict[str, Any]:
         return {
